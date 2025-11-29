@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "hibachaabani/student-management" // ton projet
+        IMAGE_NAME = "hibachaabani/student-management"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"        
         FULL_IMAGE = "${IMAGE_NAME}:${IMAGE_TAG}"
-        GIT_CRED   = "github-pat"                 // Id des credentials GitHub
-        DOCKER_CRED = "dockerhub-creds"           // Id des credentials DockerHub
+        GIT_CRED   = "github-pat"
+        DOCKER_CRED = "dockerhub-creds"
     }
 
     stages {
@@ -20,21 +20,26 @@ pipeline {
 
         stage('Maven Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                // Assure-toi que le POM est bien dans ce dossier
+                dir('.') {
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
+                dir('.') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar'
+                    }
                 }
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${FULL_IMAGE} ."
+                sh 'docker build -t ${FULL_IMAGE} .'
             }
         }
 
@@ -42,7 +47,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: env.DOCKER_CRED, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh "docker push ${FULL_IMAGE}"
+                    sh 'docker push ${FULL_IMAGE}'
                 }
             }
         }
