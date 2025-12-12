@@ -19,12 +19,7 @@ pipeline {
         }
 
         stage('Maven Build') {
-            steps {
-                // Assure-toi que le POM est bien dans ce dossier
-                dir('.') {
-                    sh 'mvn clean package -DskipTests'
-                }
-            }
+            steps { sh 'mvn clean package -DskipTests' }
         }
 
         stage('SonarQube Analysis') {
