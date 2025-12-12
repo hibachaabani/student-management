@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "hibachaabani/student-management"
         IMAGE_TAG  = "${env.BUILD_NUMBER}"        
         FULL_IMAGE = "${IMAGE_NAME}:${IMAGE_TAG}"
-        GIT_CRED   = "github-pat"
+        GIT_CRED   = "github-path"
         DOCKER_CRED = "dockerhub-creds"
     }
 
