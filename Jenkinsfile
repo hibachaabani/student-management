@@ -38,7 +38,7 @@ pipeline {
         stage('Docker Build') {
             steps {
                 dir('student-management') {
-                    sh 'docker build -t ${FULL_IMAGE} .'
+                    sh 'docker build -f ../Dockerfile -t ${FULL_IMAGE} .'
                 }
             }
         }
