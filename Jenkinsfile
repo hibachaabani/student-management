@@ -27,7 +27,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                dir('.') {
+                dir('student-management') {
                     withSonarQubeEnv('SonarQube') {
                         sh 'mvn sonar:sonar'
                     }
