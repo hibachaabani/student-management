@@ -44,19 +44,19 @@ pipeline {
         }
 
         stage('Docker Push') {
-    steps {
-        withCredentials([
-            usernamePassword(
-                credentialsId: env.DOCKER_CRED,
-                usernameVariable: 'DOCKER_USER',
-                passwordVariable: 'DOCKER_PASS'
-            )
-        ]) {
-            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-            sh 'docker push ${FULL_IMAGE}'
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: env.DOCKER_CRED,
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push ${FULL_IMAGE}'
+                }
+            }
         }
-    }
-}
 }
     }
 
