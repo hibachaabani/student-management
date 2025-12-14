@@ -2,14 +2,15 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "hibachaabani/student-management"
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"        
-        FULL_IMAGE = "${IMAGE_NAME}:${IMAGE_TAG}"
-        GIT_CRED   = "github-path"
+        IMAGE_NAME  = "hibachaabani/student-management"
+        IMAGE_TAG   = "${env.BUILD_NUMBER}"        
+        FULL_IMAGE  = "${IMAGE_NAME}:${IMAGE_TAG}"
+        GIT_CRED    = "github-path"
         DOCKER_CRED = "dockerhub-cred"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git url: 'https://github.com/hibachaabani/student-management.git',
@@ -22,7 +23,8 @@ pipeline {
             steps { 
                 dir('student-management') {
                     sh 'mvn clean package -DskipTests'
-                } }
+                }
+            }
         }
 
         stage('SonarQube Analysis') {
@@ -58,14 +60,26 @@ pipeline {
             }
         }
 
+        stage('Deploy to Kubernetes') {
+            steps {
+                dir('student-management') {
+                    sh '''
+                        kubectl apply -f k8s/mysql-deployment.yaml
+                        kubectl apply -f k8s/spring-deployment.yaml
+                        kubectl rollout restart deployment spring-app
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo "Image pushed: ${FULL_IMAGE}"
+            echo "CI/CD completed successfully 🚀"
+            echo "Image deployed: ${FULL_IMAGE}"
         }
         failure {
-            echo "Pipeline failed"
+            echo "Pipeline failed ❌"
         }
     }
 }
