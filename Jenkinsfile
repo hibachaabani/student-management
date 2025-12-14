@@ -64,8 +64,8 @@ pipeline {
             steps {
                 dir('student-management') {
                     sh '''
-                        kubectl apply -f k8s/mysql-deployment.yaml
-                        kubectl apply -f k8s/spring-deployment.yaml
+                        kubectl apply -f mysql-deployment.yaml
+                        kubectl apply -f spring-app-deployment.yaml
                         kubectl rollout restart deployment spring-app
                     '''
                 }
